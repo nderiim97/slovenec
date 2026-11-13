@@ -43,7 +43,8 @@ Ob prvem zagonu se ustvari baza `server/slovenec.db`, uvozi 10 kategorij in
 **Uredniški sistem**
 
 - prijava z e-pošto in geslom (scrypt + podpisana piškotna seja)
-- nadzorna plošča s statistiko
+- nadzorna plošča s statistiko in hitro objavo: izberi rubriko, odpri
+  urejevalnik in objavi ali shrani osnutek
 - CRUD člankov: naslov, slug, povzetek, besedilo, kategorija, avtor,
   slika, ključne besede, status (objavljeno/osnutek), izpostavljeno,
   “zadnje”, “v živo”, datum objave

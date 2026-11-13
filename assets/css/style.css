@@ -1642,6 +1642,48 @@ p {
   font-weight: 800;
 }
 
+.quick-post {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+  border-left: 4px solid var(--red);
+}
+
+.quick-post__copy h2 {
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.quick-post__copy p {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.quick-post__form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.quick-post__form select {
+  min-width: 210px;
+  border: 1px solid #d7dbe1;
+  border-radius: 4px;
+  padding: 10px 12px;
+  font-size: 13px;
+  background: #fff;
+  outline: none;
+}
+
+.quick-post__form select:focus {
+  border-color: var(--red);
+}
+
 .admin-toolbar {
   display: flex;
   flex-wrap: wrap;

@@ -16,7 +16,7 @@ TEMPLATE = """<!DOCTYPE html>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!--seo-->
     <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="/assets/css/style.css?v=20261112">
+    <link rel="stylesheet" href="/assets/css/style.css?v=20261117">
 </head>
 <body data-page="{{PAGE}}">
 <a class="skip-link" href="#main">Preskoči na vsebino</a>

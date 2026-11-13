@@ -190,13 +190,13 @@
     }).join("");
   }
 
-  function openEditor(article) {
+  function openEditor(article, presetCategory) {
     state.editingId = article ? article.id : null;
     const form = $("[data-article-form]");
     form.reset();
     $("[data-editor-title]").textContent = article ? "Uredi članek" : "Nov članek";
     $("[data-delete-article]").hidden = !article;
-    $("#f-category").innerHTML = categoryOptions(article ? article.category_slug : "slovenija");
+    $("#f-category").innerHTML = categoryOptions(article ? article.category_slug : (presetCategory || "slovenija"));
 
     if (article) {
       $("#f-title").value = article.title || "";
@@ -296,9 +296,17 @@
       state.categories = data.categories;
       $("[data-categories-table]").innerHTML = categoryTable(data.categories);
       $("#f-category").innerHTML = categoryOptions($("#f-category").value || "slovenija");
+      refreshQuickCategories();
     } catch (err) {
       toast(err.message, true);
     }
+  }
+
+  function refreshQuickCategories() {
+    const select = $("[data-quick-category]");
+    if (!select) return;
+    const current = select.value || "slovenija";
+    select.innerHTML = categoryOptions(current);
   }
 
   function categoryTable(rows) {
@@ -469,8 +477,19 @@
     });
 
     $$("[data-new-article]").forEach(function (button) {
-      button.addEventListener("click", function () { openEditor(null); });
+      button.addEventListener("click", function () {
+        const quick = state.view === "dashboard" ? $("[data-quick-category]") : null;
+        openEditor(null, quick && quick.value ? quick.value : null);
+      });
     });
+
+    const quickNew = $("[data-quick-new]");
+    if (quickNew) {
+      quickNew.addEventListener("click", function () {
+        const select = $("[data-quick-category]");
+        openEditor(null, select && select.value ? select.value : null);
+      });
+    }
 
     $("[data-article-form]").addEventListener("submit", saveArticle);
     $("[data-category-form]").addEventListener("submit", saveCategory);

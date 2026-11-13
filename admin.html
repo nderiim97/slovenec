@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!--seo-->
     <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="/assets/css/style.css?v=20261112">
+    <link rel="stylesheet" href="/assets/css/style.css?v=20261117">
 </head>
 <body class="admin-body">
 <div id="login-view" class="login-wrap" hidden>
@@ -55,6 +55,16 @@
         </div>
 
         <section data-panel="dashboard">
+            <div class="panel quick-post">
+                <div class="quick-post__copy">
+                    <h2>Objavi nov prispevek</h2>
+                    <p>Izberite rubriko in odprite urejevalnik. Prispevek lahko objavite takoj ali shranite kot osnutek.</p>
+                </div>
+                <div class="quick-post__form">
+                    <select id="quick-category" data-quick-category aria-label="Rubrika za novo objavo"></select>
+                    <button class="btn btn--red" data-quick-new type="button">+ Nova objava</button>
+                </div>
+            </div>
             <div class="stats" data-stats></div>
             <div class="panel">
                 <div class="panel__head">
@@ -229,6 +239,6 @@
 </div>
 
 <div class="toast" data-toast></div>
-<script src="/assets/js/admin.js?v=20261116" defer></script>
+<script src="/assets/js/admin.js?v=20261117" defer></script>
 </body>
 </html>
