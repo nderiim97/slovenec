@@ -22,7 +22,7 @@ Privzeti dostop (spremenite v `.env`):
 | | |
 | --- | --- |
 | E-pošta | `admin@slovenec.local` |
-| Geslo | `slovenec123` |
+| Geslo | `12345678` |
 
 Ob prvem zagonu se ustvari baza `server/slovenec.db`, uvozi 10 kategorij in
 25 demo člankov ter ustvari skrbniški račun.

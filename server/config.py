@@ -46,7 +46,7 @@ class Settings:
     database_url: str = _database_url()
 
     admin_email: str = os.getenv("ADMIN_EMAIL", "admin@slovenec.local")
-    admin_password: str = os.getenv("ADMIN_PASSWORD", "slovenec123")
+    admin_password: str = os.getenv("ADMIN_PASSWORD", "12345678")
 
     public_base_url: str = os.getenv("PUBLIC_BASE_URL", "http://127.0.0.1:8000").rstrip(
         "/"
