@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--seo-->
+    <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/assets/css/style.css?v=20261112">
+</head>
+<body class="admin-body">
+<div id="login-view" class="login-wrap" hidden>
+    <div class="login-card">
+        <a class="brand" href="/"><span class="brand__name"><span data-site-brand>Slovenec</span><span class="brand__dot"></span></span></a>
+        <p>Uredniški sistem. Prijavite se z e-pošto in geslom.</p>
+        <div class="login-error" data-login-error></div>
+        <form data-login-form>
+            <div class="field">
+                <label for="login-email">E-pošta</label>
+                <input id="login-email" name="email" type="email" autocomplete="username" required value="admin@slovenec.local">
+            </div>
+            <div class="field">
+                <label for="login-password">Geslo</label>
+                <input id="login-password" name="password" type="password" autocomplete="current-password" required value="slovenec123">
+            </div>
+            <button class="btn btn--red" type="submit">Prijava</button>
+        </form>
+        <p class="admin-note">Demo podatki so prednastavljeni. Spremenite jih v <code>.env</code>.</p>
+        <p class="admin-note"><a href="/">← Nazaj na portal</a></p>
+    </div>
+</div>
+
+<div id="admin-app" class="admin-shell" hidden>
+    <aside class="admin-side">
+        <a class="brand" href="/"><span class="brand__name"><span data-site-brand>Slovenec</span><span class="brand__dot"></span></span></a>
+        <span class="admin-side__tag">Uredniški sistem</span>
+        <button class="admin-side__link is-active" data-view="dashboard" type="button">Nadzorna plošča</button>
+        <button class="admin-side__link" data-view="articles" type="button">Članki</button>
+        <button class="admin-side__link" data-view="categories" type="button">Kategorije</button>
+        <button class="admin-side__link" data-view="settings" type="button">Nastavitve</button>
+        <span class="admin-side__spacer"></span>
+        <a class="admin-side__link" href="/" target="_blank" rel="noopener">Odpri portal ↗</a>
+        <button class="admin-side__link" data-logout type="button">Odjava</button>
+    </aside>
+
+    <main class="admin-main">
+        <div class="admin-topbar">
+            <div>
+                <h1 data-view-title>Nadzorna plošča</h1>
+                <p data-view-subtitle>Pregled objav in obiska.</p>
+            </div>
+            <div class="admin-user">
+                <span data-user-name></span>
+                <a class="btn btn--ghost btn--sm" href="/" target="_blank" rel="noopener">Poglej stran</a>
+            </div>
+        </div>
+
+        <section data-panel="dashboard">
+            <div class="stats" data-stats></div>
+            <div class="panel">
+                <div class="panel__head">
+                    <h2>Nazadnje urejeno</h2>
+                    <button class="btn btn--red btn--sm" data-new-article type="button">+ Nov članek</button>
+                </div>
+                <div class="table-wrap" data-recent></div>
+            </div>
+        </section>
+
+        <section data-panel="articles" hidden>
+            <div class="panel">
+                <div class="panel__head">
+                    <h2>Vsi članki</h2>
+                    <button class="btn btn--red btn--sm" data-new-article type="button">+ Nov članek</button>
+                </div>
+                <div class="admin-toolbar">
+                    <input type="search" data-article-search placeholder="Išči po naslovu ali slugi …">
+                    <select data-article-filter>
+                        <option value="">Vsi statusi</option>
+                        <option value="published">Objavljeno</option>
+                        <option value="draft">Osnutek</option>
+                    </select>
+                    <button class="btn btn--ghost btn--sm" data-refresh-articles type="button">Osveži</button>
+                </div>
+                <div class="table-wrap" data-articles-table></div>
+            </div>
+        </section>
+
+        <section data-panel="editor" hidden>
+            <div class="panel">
+                <div class="panel__head">
+                    <h2 data-editor-title>Nov članek</h2>
+                    <button class="btn btn--ghost btn--sm" data-close-editor type="button">← Nazaj</button>
+                </div>
+                <form class="admin-form" data-article-form>
+                    <div class="form-grid">
+                        <div class="field field--full">
+                            <label for="f-title">Naslov</label>
+                            <input id="f-title" name="title" required maxlength="300">
+                        </div>
+                        <div class="field">
+                            <label for="f-slug">Slug (URL)</label>
+                            <input id="f-slug" name="slug" maxlength="200" placeholder="pustite prazno za samodejno">
+                        </div>
+                        <div class="field">
+                            <label for="f-category">Kategorija</label>
+                            <select id="f-category" name="category_slug" required></select>
+                        </div>
+                        <div class="field">
+                            <label for="f-author">Avtor</label>
+                            <input id="f-author" name="author" maxlength="120" value="Uredništvo">
+                        </div>
+                        <div class="field">
+                            <label for="f-published">Datum objave</label>
+                            <input id="f-published" name="published_at" type="datetime-local">
+                        </div>
+                        <div class="field field--full">
+                            <label for="f-deck">Povzetek (deck)</label>
+                            <textarea id="f-deck" name="deck" style="min-height:80px" maxlength="1000"></textarea>
+                        </div>
+                        <div class="field field--full">
+                            <label for="f-body">Besedilo</label>
+                            <textarea id="f-body" name="body" placeholder="Odstavke ločite s prazno vrstico."></textarea>
+                            <small>Odstavke ločite s prazno vrstico. Dolžina branja se izračuna samodejno.</small>
+                        </div>
+                        <div class="field">
+                            <label for="f-image">Naslovna slika (URL)</label>
+                            <input id="f-image" name="image_url" maxlength="500" placeholder="/assets/img/covers/cover-1.svg">
+                        </div>
+                        <div class="field">
+                            <label for="f-caption">Podnapis slike</label>
+                            <input id="f-caption" name="image_caption" maxlength="300">
+                        </div>
+                        <div class="field field--full">
+                            <label for="f-tags">Ključne besede (ločene z vejico)</label>
+                            <input id="f-tags" name="tags" maxlength="500">
+                        </div>
+                        <div class="field">
+                            <label for="f-status">Status</label>
+                            <select id="f-status" name="status">
+                                <option value="published">Objavljeno</option>
+                                <option value="draft">Osnutek</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label>Oznake</label>
+                            <div class="switches">
+                                <label class="switch"><input type="checkbox" name="is_featured"> Izpostavljeno</label>
+                                <label class="switch"><input type="checkbox" name="is_breaking"> Zadnje</label>
+                                <label class="switch"><input type="checkbox" name="is_live"> V živo</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn--red" type="submit" data-save-article>Shrani članek</button>
+                        <button class="btn btn--ghost" type="button" data-close-editor>Prekliči</button>
+                        <span class="spacer"></span>
+                        <button class="btn btn--ghost" type="button" data-delete-article hidden>Izbriši</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <section data-panel="categories" hidden>
+            <div class="panel" style="margin-bottom:16px">
+                <div class="panel__head"><h2>Nova kategorija</h2></div>
+                <form class="admin-form" data-category-form>
+                    <div class="form-grid">
+                        <div class="field">
+                            <label for="c-name">Ime</label>
+                            <input id="c-name" name="name" required maxlength="120">
+                        </div>
+                        <div class="field">
+                            <label for="c-slug">Slug</label>
+                            <input id="c-slug" name="slug" required maxlength="64" placeholder="npr. gospodarstvo">
+                        </div>
+                        <div class="field">
+                            <label for="c-color">Barva</label>
+                            <input id="c-color" name="color" type="color" value="#e01b22" style="height:42px;padding:4px">
+                        </div>
+                        <div class="field">
+                            <label for="c-sort">Vrstni red</label>
+                            <input id="c-sort" name="sort" type="number" value="99">
+                        </div>
+                        <div class="field field--full">
+                            <label for="c-desc">Opis</label>
+                            <input id="c-desc" name="description" maxlength="500">
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn--red" type="submit">Shrani kategorijo</button>
+                        <button class="btn btn--ghost" type="reset">Počisti</button>
+                    </div>
+                </form>
+            </div>
+            <div class="panel">
+                <div class="panel__head"><h2>Kategorije</h2></div>
+                <div class="table-wrap" data-categories-table></div>
+            </div>
+        </section>
+
+        <section data-panel="settings" hidden>
+            <div class="panel">
+                <div class="panel__head"><h2>Nastavitve portala</h2></div>
+                <form class="admin-form" data-settings-form>
+                    <div class="form-grid">
+                        <div class="field">
+                            <label for="s-name">Ime portala</label>
+                            <input id="s-name" name="site_name" maxlength="80">
+                        </div>
+                        <div class="field">
+                            <label for="s-tagline">Slogan</label>
+                            <input id="s-tagline" name="site_tagline" maxlength="160">
+                        </div>
+                        <div class="field">
+                            <label for="s-email">Kontaktni e-naslov</label>
+                            <input id="s-email" name="site_email" type="email" maxlength="160">
+                        </div>
+                        <div class="field">
+                            <label for="s-city">Mesto</label>
+                            <input id="s-city" name="site_city" maxlength="80">
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn--red" type="submit">Shrani nastavitve</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+</div>
+
+<div class="toast" data-toast></div>
+<script src="/assets/js/admin.js?v=20261116" defer></script>
+</body>
+</html>

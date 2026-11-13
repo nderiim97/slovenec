@@ -1,0 +1,1 @@
+"""Slovenec portal backend package."""
