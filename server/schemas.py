@@ -41,3 +41,8 @@ class SettingsIn(BaseModel):
     site_tagline: str = Field(default="", max_length=160)
     site_email: str = Field(default="", max_length=160)
     site_city: str = Field(default="Ljubljana", max_length=80)
+
+
+class PasswordChangeIn(BaseModel):
+    current_password: str = Field(min_length=4, max_length=200)
+    new_password: str = Field(min_length=8, max_length=200)

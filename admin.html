@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!--seo-->
     <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="/assets/css/style.css?v=20261117">
+    <link rel="stylesheet" href="/assets/css/style.css?v=20261118">
 </head>
 <body class="admin-body">
 <div id="login-view" class="login-wrap" hidden>
@@ -20,7 +20,7 @@
             </div>
             <div class="field">
                 <label for="login-password">Geslo</label>
-                <input id="login-password" name="password" type="password" autocomplete="current-password" required value="12345678">
+                <input id="login-password" name="password" type="password" autocomplete="current-password" placeholder="Vnesite geslo" required>
             </div>
             <button class="btn btn--red" type="submit">Prijava</button>
         </form>
@@ -136,8 +136,16 @@
                             <input id="f-image" name="image_url" maxlength="500" placeholder="/assets/img/covers/cover-1.svg">
                         </div>
                         <div class="field">
+                            <label for="f-image-file">Naloži sliko z računalnika</label>
+                            <input id="f-image-file" name="image_file" type="file" accept="image/jpeg,image/png,image/webp,image/gif" data-image-upload>
+                            <small>JPEG, PNG, WebP ali GIF, največ 5 MB.</small>
+                        </div>
+                        <div class="field">
                             <label for="f-caption">Podnapis slike</label>
                             <input id="f-caption" name="image_caption" maxlength="300">
+                        </div>
+                        <div class="field field--full">
+                            <img class="admin-image-preview" data-image-preview alt="Predogled naslovne slike" hidden>
                         </div>
                         <div class="field field--full">
                             <label for="f-tags">Ključne besede (ločene z vejico)</label>
@@ -234,11 +242,34 @@
                     </div>
                 </form>
             </div>
+            <div class="panel">
+                <div class="panel__head"><h2>Sprememba gesla</h2></div>
+                <form class="admin-form" data-password-form>
+                    <div class="form-grid">
+                        <div class="field field--full">
+                            <label for="p-current">Trenutno geslo</label>
+                            <input id="p-current" name="current_password" type="password" autocomplete="current-password" required>
+                        </div>
+                        <div class="field">
+                            <label for="p-new">Novo geslo</label>
+                            <input id="p-new" name="new_password" type="password" autocomplete="new-password" minlength="8" required>
+                            <small>Najmanj 8 znakov.</small>
+                        </div>
+                        <div class="field">
+                            <label for="p-confirm">Ponovi novo geslo</label>
+                            <input id="p-confirm" name="confirm_password" type="password" autocomplete="new-password" minlength="8" required>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn--red" type="submit">Spremeni geslo</button>
+                    </div>
+                </form>
+            </div>
         </section>
     </main>
 </div>
 
 <div class="toast" data-toast></div>
-<script src="/assets/js/admin.js?v=20261117" defer></script>
+<script src="/assets/js/admin.js?v=20261118" defer></script>
 </body>
 </html>

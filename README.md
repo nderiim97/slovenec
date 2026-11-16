@@ -46,11 +46,12 @@ Ob prvem zagonu se ustvari baza `server/slovenec.db`, uvozi 10 kategorij in
 - nadzorna plošča s statistiko in hitro objavo: izberi rubriko, odpri
   urejevalnik in objavi ali shrani osnutek
 - CRUD člankov: naslov, slug, povzetek, besedilo, kategorija, avtor,
-  slika, ključne besede, status (objavljeno/osnutek), izpostavljeno,
-  “zadnje”, “v živo”, datum objave
+  slika (nalaganje ali URL), ključne besede, status (objavljeno/osnutek),
+  izpostavljeno, “zadnje”, “v živo”, datum objave
 - upravljanje kategorij (ime, slug, barva, opis, vrstni red)
 - nastavitve portala (ime, slogan, e-pošta, mesto); sprememba imena takoj
   posodobi glavo, nogo in uredniški sistem
+- sprememba skrbniškega gesla v nastavitvah
 
 ## Struktura
 
@@ -64,7 +65,8 @@ slovenec/
 │   ├── js/app.js                         skupne funkcije + chrome
 │   ├── js/pages.js                       render javnih strani
 │   ├── js/admin.js                       CMS logika
-│   └── img/covers/*.svg                  lokalne ilustracije
+│   ├── img/covers/*.svg                  lokalne ilustracije
+│   └── uploads/                          naložene slike (izven gita)
 ├── server/
 │   ├── main.py                           FastAPI: strani + API
 │   ├── models.py                         Article, Category, AdminUser, Setting
@@ -91,6 +93,8 @@ slovenec/
 | GET/POST/PUT/DELETE | `/api/admin/articles` | CRUD člankov |
 | GET/POST/PUT/DELETE | `/api/admin/categories` | CRUD kategorij |
 | GET/PUT | `/api/admin/settings` | nastavitve |
+| POST | `/api/admin/password` | sprememba skrbniškega gesla |
+| POST | `/api/admin/uploads` | nalaganje naslovne slike |
 
 Interaktivna dokumentacija: <http://127.0.0.1:8000/docs>.
 

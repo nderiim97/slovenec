@@ -25,7 +25,11 @@
 
   async function api(path, options) {
     const opts = Object.assign({ credentials: "same-origin" }, options || {});
-    if (opts.body && typeof opts.body !== "string") {
+    if (
+      opts.body &&
+      typeof opts.body !== "string" &&
+      !(typeof FormData !== "undefined" && opts.body instanceof FormData)
+    ) {
       opts.body = JSON.stringify(opts.body);
       opts.headers = Object.assign({ "Content-Type": "application/json" }, opts.headers || {});
     }
@@ -221,7 +225,40 @@
       form.elements.is_breaking.checked = false;
       form.elements.is_live.checked = false;
     }
+    updateImagePreview();
     showView("editor");
+  }
+
+  function updateImagePreview() {
+    const input = $("#f-image");
+    const image = $("[data-image-preview]");
+    if (!input || !image) return;
+    const url = input.value.trim();
+    if (url) {
+      image.src = url;
+      image.hidden = false;
+    } else {
+      image.hidden = true;
+      image.removeAttribute("src");
+    }
+  }
+
+  async function uploadImage(file) {
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      toast("Slika je prevelika. Največja dovoljena velikost je 5 MB.", true);
+      return;
+    }
+    const formData = new FormData();
+    formData.append("file", file);
+    try {
+      const data = await api("/api/admin/uploads", { method: "POST", body: formData });
+      $("#f-image").value = data.url;
+      updateImagePreview();
+      toast("Slika je naložena.");
+    } catch (err) {
+      toast(err.message, true);
+    }
   }
 
   async function saveArticle(event) {
@@ -427,6 +464,32 @@
     }
   }
 
+  async function changePassword(event) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const current = form.elements.current_password.value;
+    const next = form.elements.new_password.value;
+    const confirm = form.elements.confirm_password.value;
+    if (next !== confirm) {
+      toast("Novi gesli se ne ujemata.", true);
+      return;
+    }
+    if (next.length < 8) {
+      toast("Novo geslo mora imeti vsaj 8 znakov.", true);
+      return;
+    }
+    try {
+      await api("/api/admin/password", {
+        method: "POST",
+        body: { current_password: current, new_password: next },
+      });
+      form.reset();
+      toast("Geslo je spremenjeno.");
+    } catch (err) {
+      toast(err.message, true);
+    }
+  }
+
   // -------------------------------------------------------------------------
   // Auth and events
   // -------------------------------------------------------------------------
@@ -494,6 +557,17 @@
     $("[data-article-form]").addEventListener("submit", saveArticle);
     $("[data-category-form]").addEventListener("submit", saveCategory);
     $("[data-settings-form]").addEventListener("submit", saveSettings);
+    $("[data-password-form]").addEventListener("submit", changePassword);
+
+    const imageUpload = $("[data-image-upload]");
+    if (imageUpload) {
+      imageUpload.addEventListener("change", function () {
+        uploadImage(imageUpload.files && imageUpload.files[0]);
+        imageUpload.value = "";
+      });
+    }
+    const imageUrl = $("#f-image");
+    if (imageUrl) imageUrl.addEventListener("input", updateImagePreview);
 
     $$("[data-close-editor]").forEach(function (button) {
       button.addEventListener("click", function () { showView("articles"); loadArticles(); });

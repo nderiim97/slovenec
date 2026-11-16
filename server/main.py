@@ -9,13 +9,23 @@ from __future__ import annotations
 import html
 import logging
 import re
+import secrets
 import unicodedata
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urlsplit
 
-from fastapi import Depends, FastAPI, HTTPException, Request, Response, status
+from fastapi import (
+    Depends,
+    FastAPI,
+    File,
+    HTTPException,
+    Request,
+    Response,
+    UploadFile,
+    status,
+)
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
@@ -25,7 +35,7 @@ from sqlalchemy.orm import Session, selectinload
 from .config import BASE_DIR, settings
 from .db import SessionLocal, get_db, init_db
 from .models import AdminUser, Article, Category, Setting
-from .schemas import ArticleIn, CategoryIn, LoginIn, SettingsIn
+from .schemas import ArticleIn, CategoryIn, LoginIn, PasswordChangeIn, SettingsIn
 from .security import (
     COOKIE_NAME,
     SESSION_MAX_AGE,
@@ -33,6 +43,7 @@ from .security import (
     client_ip,
     create_session_token,
     current_admin,
+    hash_password,
     login_allowed,
     register_failed_login,
     require_admin,
@@ -56,6 +67,23 @@ PAGES = {
 
 PUBLIC_DIR = BASE_DIR
 COVERS_DIR = BASE_DIR / "assets" / "img" / "covers"
+UPLOADS_DIR = BASE_DIR / "assets" / "uploads"
+UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
+
+MAX_IMAGE_BYTES = 5 * 1024 * 1024
+
+
+def image_extension(data: bytes) -> str | None:
+    """Return a safe extension based on the file signature (not the client)."""
+    if data.startswith(b"\xff\xd8\xff"):
+        return ".jpg"
+    if data.startswith(b"\x89PNG\r\n\x1a\n"):
+        return ".png"
+    if data[:6] in (b"GIF87a", b"GIF89a"):
+        return ".gif"
+    if len(data) >= 12 and data[:4] == b"RIFF" and data[8:12] == b"WEBP":
+        return ".webp"
+    return None
 
 
 @asynccontextmanager
@@ -876,6 +904,49 @@ def admin_put_settings(
             row.value = str(value)
     db.commit()
     return {"settings": get_settings(db)}
+
+
+@app.post("/api/admin/password")
+def admin_change_password(
+    payload: PasswordChangeIn,
+    admin: AdminUser = Depends(require_admin),
+    db: Session = Depends(get_db),
+):
+    if not verify_password(payload.current_password, admin.password_hash):
+        raise HTTPException(status_code=400, detail="Trenutno geslo ni pravilno.")
+    if payload.current_password == payload.new_password:
+        raise HTTPException(
+            status_code=400, detail="Novo geslo mora biti drugačno od trenutnega."
+        )
+    admin.password_hash = hash_password(payload.new_password)
+    db.commit()
+    return {"ok": True}
+
+
+@app.post("/api/admin/uploads")
+async def admin_upload_image(
+    file: UploadFile = File(...),
+    admin: AdminUser = Depends(require_admin),
+):
+    data = await file.read(MAX_IMAGE_BYTES + 1)
+    if len(data) > MAX_IMAGE_BYTES:
+        raise HTTPException(
+            status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+            detail="Slika je prevelika. Največja dovoljena velikost je 5 MB.",
+        )
+    extension = image_extension(data)
+    if extension is None:
+        raise HTTPException(
+            status_code=400,
+            detail="Dovoljene so slike JPEG, PNG, WebP ali GIF.",
+        )
+    name = f"{datetime.now(timezone.utc):%Y%m%d}-{secrets.token_hex(8)}{extension}"
+    (UPLOADS_DIR / name).write_bytes(data)
+    return {
+        "url": f"/assets/uploads/{name}",
+        "filename": name,
+        "size": len(data),
+    }
 
 
 @app.get("/health")

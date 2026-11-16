@@ -3,3 +3,5 @@ __pycache__/
 .env
 server/slovenec.db
 .pytest_cache/
+assets/uploads/*
+!assets/uploads/.gitkeep

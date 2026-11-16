@@ -1629,6 +1629,21 @@ p {
   padding: 20px;
 }
 
+.panel + .panel {
+  margin-top: 22px;
+}
+
+.admin-image-preview {
+  display: block;
+  width: 100%;
+  max-width: 360px;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--soft);
+}
+
 .panel__head {
   display: flex;
   align-items: center;
